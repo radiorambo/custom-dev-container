@@ -10,8 +10,6 @@ RUN pacman -Syu --noconfirm && \
         wget \
         git \
         ca-certificates \
-        nodejs \
-        npm \
         python \
         python-pip \
         unzip \
@@ -38,8 +36,7 @@ RUN set -eux; \
     install -m 0755 /tmp/fresh-editor-${fresh_arch}-unknown-linux-gnu/fresh /usr/local/bin/fresh; \
     rm -rf /tmp/fresh-editor-* /tmp/fresh.tar.xz
 
-RUN node --version && \
-    bun --version && \
+RUN bun --version && \
     python --version && \
     fresh --version
 

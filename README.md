@@ -15,7 +15,6 @@ ghcr.io/radiorambo/custom-dev-container:latest
 ## What's included
 
 - Arch Linux (rolling)
-- Node.js + npm (from `pacman`)
 - Bun (latest, official release tarball)
 - Python + pip (from `pacman`)
 - Fresh editor (latest, official release tarball)
@@ -36,7 +35,6 @@ docker run -it --rm ghcr.io/radiorambo/custom-dev-container:latest
 Inside the container:
 
 ```bash
-node --version
 bun --version
 python --version
 python3 --version

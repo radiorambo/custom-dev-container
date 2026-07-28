@@ -17,6 +17,7 @@ ghcr.io/radiorambo/custom-dev-container:latest
 - Arch Linux (rolling)
 - Bun (latest, official release tarball)
 - Python + pip (from `pacman`)
+- OpenCode CLI (from `[extra]`)
 - Fresh editor (latest, from chaotic-aur)
 - Common CLI tools: `git`, `curl`, `sudo`, `unzip`, `xz`
 
@@ -36,10 +37,13 @@ Inside the container:
 
 ```bash
 bun --version
+bunx --version
 python --version
 python3 --version
 fresh --version
+opencode --version
 fresh
+opencode
 ```
 
 ## Versioning

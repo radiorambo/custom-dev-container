@@ -11,6 +11,7 @@ RUN pacman -Syu --noconfirm && \
         ca-certificates \
         python \
         python-pip \
+        opencode \
         unzip \
         xz \
         which \
@@ -33,11 +34,14 @@ RUN set -eux; \
     curl -fsSL -o /tmp/bun.zip "$bun_url"; \
     unzip /tmp/bun.zip -d /tmp/bun; \
     install -m 0755 /tmp/bun/bun-linux-${bun_arch}/bun /usr/local/bin/bun; \
+    ln -s bun /usr/local/bin/bunx; \
     rm -rf /tmp/bun /tmp/bun.zip
 
 RUN bun --version && \
+    bunx --version && \
     python --version && \
-    fresh --version
+    fresh --version && \
+    opencode --version
 
 WORKDIR /workspace
 

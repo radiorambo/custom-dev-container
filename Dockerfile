@@ -17,7 +17,8 @@ RUN pacman -Syu --noconfirm && \
         sudo \
     && pacman -Scc --noconfirm
 
-RUN pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
+RUN pacman-key --init && \
+    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
     pacman-key --lsign-key 3056513887B78AEB && \
     pacman -U --noconfirm 'https://builds.garudalinux.org/repos/chaotic-aur/chaotic-keyring.pkg.tar.zst' && \
     pacman -U --noconfirm 'https://builds.garudalinux.org/repos/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \

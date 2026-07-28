@@ -17,8 +17,8 @@ ghcr.io/radiorambo/custom-dev-container:latest
 - Arch Linux (rolling)
 - Bun (latest, official release tarball)
 - Python + pip (from `pacman`)
-- Fresh editor (latest, official release tarball)
-- Common CLI tools: `git`, `curl`, `wget`, `sudo`, `unzip`, `xz`
+- Fresh editor (latest, from chaotic-aur)
+- Common CLI tools: `git`, `curl`, `sudo`, `unzip`, `xz`
 
 ## Schedule
 

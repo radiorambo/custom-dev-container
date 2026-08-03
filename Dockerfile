@@ -16,6 +16,7 @@ RUN pacman -Syu --noconfirm && \
         xz \
         which \
         sudo \
+        jq \
     && pacman -Scc --noconfirm
 
 RUN pacman-key --init && \

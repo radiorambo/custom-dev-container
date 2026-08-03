@@ -43,6 +43,16 @@ RUN bun --version && \
     fresh --version && \
     opencode --version
 
+# OpenCode config: enable "YOLO mode" (all permissions allowed, no prompts).
+RUN mkdir -p /root/.config/opencode && \
+    cat > /root/.config/opencode/opencode.json <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": "allow",
+  "autoupdate": false
+}
+EOF
+
 WORKDIR /workspace
 
 CMD ["/bin/bash"]

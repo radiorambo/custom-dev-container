@@ -41,7 +41,7 @@ RUN set -eux; \
 
 RUN bun install -g chrome-devtools-mcp
 
-ENV PATH="/root/.bun/install/global/bin:$PATH"
+ENV PATH="/root/.bun/bin:$PATH"
 
 RUN bun --version && \
     bunx --version && \

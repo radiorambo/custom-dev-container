@@ -17,6 +17,7 @@ RUN pacman -Syu --noconfirm && \
         which \
         sudo \
         jq \
+        chromium \
     && pacman -Scc --noconfirm
 
 RUN pacman-key --init && \
@@ -38,21 +39,18 @@ RUN set -eux; \
     ln -s bun /usr/local/bin/bunx; \
     rm -rf /tmp/bun /tmp/bun.zip
 
+RUN bun install -g chrome-devtools-mcp
+
+ENV PATH="/root/.bun/install/global/bin:$PATH"
+
 RUN bun --version && \
     bunx --version && \
     python --version && \
     fresh --version && \
-    opencode --version
+    opencode --version && \
+    chrome-devtools-mcp --version
 
-# OpenCode config: enable "YOLO mode" (all permissions allowed, no prompts).
-RUN mkdir -p /root/.config/opencode && \
-    cat > /root/.config/opencode/opencode.json <<'EOF'
-{
-  "$schema": "https://opencode.ai/config.json",
-  "permission": "allow",
-  "autoupdate": false
-}
-EOF
+COPY config/opencode.json /root/.config/opencode/opencode.json
 
 WORKDIR /workspace
 

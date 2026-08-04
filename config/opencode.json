@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": "allow",
+  "autoupdate": false,
+  "mcp": {
+    "chromium-devtools": {
+      "command": [
+        "chrome-devtools-mcp",
+        "--browser-url=http://127.0.0.1:9222",
+        "--headless"
+      ],
+      "type": "local",
+      "enabled": true
+    }
+  }
+}

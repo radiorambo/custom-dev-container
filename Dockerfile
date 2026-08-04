@@ -11,7 +11,10 @@ RUN pacman -Syu --noconfirm && \
         ca-certificates \
         python \
         python-pip \
-        nodejs \
+        nodejs-lts \
+        pnpm \
+        npm \
+        bun \
         opencode \
         unzip \
         xz \
@@ -30,19 +33,7 @@ RUN pacman-key --init && \
     pacman -Syu fresh-editor --noconfirm && \
     pacman -Scc --noconfirm
 
-RUN set -eux; \
-    bun_arch=$([ "$(uname -m)" = "x86_64" ] && echo x64 || echo aarch64); \
-    bun_url=$(curl -fsSL https://api.github.com/repos/oven-sh/bun/releases/latest \
-      | python -c "import json,sys; print([a['browser_download_url'] for a in json.load(sys.stdin)['assets'] if a['name'].endswith(f'bun-linux-${bun_arch}.zip')][0])"); \
-    curl -fsSL -o /tmp/bun.zip "$bun_url"; \
-    unzip /tmp/bun.zip -d /tmp/bun; \
-    install -m 0755 /tmp/bun/bun-linux-${bun_arch}/bun /usr/local/bin/bun; \
-    ln -s bun /usr/local/bin/bunx; \
-    rm -rf /tmp/bun /tmp/bun.zip
-
-RUN bun install -g chrome-devtools-mcp
-
-ENV PATH="/root/.bun/bin:$PATH"
+RUN npm install -g chrome-devtools-mcp
 
 RUN bun --version && \
     bunx --version && \

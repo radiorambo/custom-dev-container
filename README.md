@@ -1,3 +1,5 @@
+https://github.com/radiorambo/custom-dev-container/pkgs/container/custom-dev-container
+
 # custom-dev-container
 
 A custom Docker dev container image based on **Arch Linux**, with Node.js, Bun, Python, and the Fresh terminal editor preinstalled.

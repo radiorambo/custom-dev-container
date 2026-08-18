@@ -35,6 +35,8 @@ RUN pacman-key --init && \
 
 RUN npm install -g chrome-devtools-mcp
 
+RUN printf "alias oc='opencode'\n" >> /root/.bashrc
+
 RUN bun --version && \
     bunx --version && \
     python --version && \

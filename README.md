@@ -20,6 +20,7 @@ ghcr.io/radiorambo/custom-dev-container:latest
 - Bun (latest, official release tarball)
 - Python + pip (from `pacman`)
 - OpenCode CLI (from `[extra]`)
+- Vite+ CLI (`vp`, from `https://vite.plus`)
 - Fresh editor (latest, from chaotic-aur)
 - Common CLI tools: `git`, `curl`, `sudo`, `unzip`, `xz`
 - Chromium browser (for browser automation via MCP)

@@ -35,6 +35,11 @@ RUN pacman-key --init && \
 
 RUN npm install -g chrome-devtools-mcp
 
+RUN curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash
+
+# ponytail: cover both monolithic (~/.vite-plus/bin) and split (~/.local/bin) layouts
+ENV PATH="/root/.vite-plus/bin:/root/.local/bin:${PATH}"
+
 RUN printf "alias oc='opencode'\n" >> /root/.bashrc
 
 RUN bun --version && \
@@ -42,6 +47,7 @@ RUN bun --version && \
     python --version && \
     fresh --version && \
     opencode --version && \
+    vp --version && \
     chrome-devtools-mcp --version
 
 COPY config/opencode.json /root/.config/opencode/opencode.json

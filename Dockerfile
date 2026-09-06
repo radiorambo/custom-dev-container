@@ -37,8 +37,8 @@ RUN npm install -g chrome-devtools-mcp
 
 RUN curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash
 
-# ponytail: cover both monolithic (~/.vite-plus/bin) and split (~/.local/bin) layouts
-ENV PATH="/root/.vite-plus/bin:/root/.local/bin:${PATH}"
+# ponytail: split layout reports bin at ~/.local/share/vite-plus/bin
+ENV PATH="/root/.local/share/vite-plus/bin:${PATH}"
 
 RUN printf "alias oc='opencode'\n" >> /root/.bashrc
 

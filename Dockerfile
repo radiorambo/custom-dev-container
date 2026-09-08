@@ -51,6 +51,9 @@ RUN bun --version && \
     chrome-devtools-mcp --version
 
 COPY config/opencode.json /root/.config/opencode/opencode.json
+COPY config/AGENTS.md /root/.config/opencode/AGENTS.md
+
+EXPOSE 10100-10110
 
 WORKDIR /workspace
 

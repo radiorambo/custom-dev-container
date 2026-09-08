@@ -55,6 +55,8 @@ COPY config/AGENTS.md /root/.config/opencode/AGENTS.md
 
 EXPOSE 10100-10110
 
+EXPOSE 10100-10110
+
 WORKDIR /workspace
 
 CMD ["/bin/bash"]

@@ -102,15 +102,13 @@ opencode
 
 ### JavaScript runtime decision
 
-The image intentionally does not include Node.js, npm, or pnpm to reduce its
-size. In interactive Bash sessions, `npm` is aliased to `bun` and `npx` to
-`bunx`.
+The image includes system Node.js and Bun. In interactive Bash sessions,
+`npm` is aliased to `bun` and `npx` to `bunx`.
 
-If a project specifically requires Node.js or pnpm, install the needed tool
-for that session rather than adding it to the base image:
+If a project specifically requires pnpm, install it for that session:
 
 ```bash
-pacman -Syu --noconfirm nodejs-lts pnpm
+pacman -Syu --noconfirm pnpm
 ```
 
 ## Versioning

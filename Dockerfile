@@ -13,6 +13,7 @@ RUN pacman -Syu --noconfirm && \
         ca-certificates \
         python \
         python-pip \
+        nodejs \
         bun \
         opencode \
         unzip \

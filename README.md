@@ -23,20 +23,13 @@ ghcr.io/radiorambo/custom-dev-container:latest
 - Vite+ CLI (`vp`, from `https://vite.plus`)
 - Fresh editor (latest, from chaotic-aur)
 - Common CLI tools: `git`, `curl`, `sudo`, `unzip`, `xz`
-- Chromium browser (for browser automation via MCP)
-- OpenCode MCP server: `chromium-devtools` (pre-installed globally via `bun install -g`)
+- Obscura headless browser (for browser automation via MCP)
+- OpenCode MCP server: Obscura (`obscura mcp`)
 
 ## OpenCode MCP
 
-The `chromium-devtools` MCP server is pre-installed globally via `bun install -g`
-and configured in `config/opencode.json`. It connects to Chromium running with
-`--remote-debugging-port=9222`. To start Chromium with remote debugging enabled:
-
-```bash
-chromium --remote-debugging-port=9222
-```
-
-Once running, the MCP server is available automatically in OpenCode.
+Obscura is installed from AUR as `obscura-browser-bin` and configured as the
+OpenCode MCP server with `obscura mcp`. It is enabled automatically in OpenCode.
 
 ## Schedule
 

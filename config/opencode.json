@@ -3,11 +3,10 @@
   "permission": "allow",
   "autoupdate": false,
   "mcp": {
-    "chromium-devtools": {
+    "obscura - headless browser | chromium devtools alternative": {
       "command": [
-        "chrome-devtools-mcp",
-        "--browser-url=http://127.0.0.1:9222",
-        "--headless"
+        "obscura",
+        "mcp"
       ],
       "type": "local",
       "enabled": true

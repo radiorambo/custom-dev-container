@@ -37,7 +37,9 @@ RUN curl -fsSL https://github.com/h4ckf0r0day/obscura/releases/latest/download/o
     install -m 0755 /tmp/obscura /usr/local/bin/obscura && \
     install -m 0755 /tmp/obscura-worker /usr/local/bin/obscura-worker && \
     rm -rf /tmp/obscura.tar.gz /tmp/obscura /tmp/obscura-worker && \
-    curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash && \
+    curl -fsSL https://vite.plus | \
+    VP_NODE_MANAGER=no VP_PM_MANAGER=no bash && \
+    vp env off && \
     printf "alias oc='opencode'\nalias npm='bun'\nalias npx='bunx'\n" >> /root/.bashrc
 
 USER root

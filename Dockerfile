@@ -1,4 +1,4 @@
-FROM archlinux:latest
+FROM lscr.io/linuxserver/webtop:arch-xfce
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
@@ -43,7 +43,7 @@ RUN curl -fsSL https://github.com/h4ckf0r0day/obscura/releases/latest/download/o
     vp env off && \
     printf "alias oc='opencode'\nalias npm='bun'\nalias npx='bunx'\n" >> /root/.bashrc
 
-USER root
+# USER root
 
 RUN bun --version && \
     bunx --version && \
@@ -61,4 +61,4 @@ EXPOSE 10100-10110
 
 WORKDIR /workspace
 
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]

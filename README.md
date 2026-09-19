@@ -40,26 +40,50 @@ Note: GitHub's cron syntax has no biweekly primitive, so `1,15` is the standard 
 ## Usage
 
 ```bash
-docker run -it --rm \
+podman run -it --rm \
+  --userns=keep-id:uid=0,gid=0 \
   -v "$PWD:/workspace" \
   --workdir /workspace \
   ghcr.io/radiorambo/custom-dev-container:latest
 ```
 
-The image runs as the non-root `user` account (UID/GID 1000), so files created
-in a bind-mounted workspace are owned by the usual first host user. For a host
-with a different UID/GID, build with matching values:
+The image intentionally runs all applications as `root` inside the container.
+Use rootless Podman with `keep-id:uid=0,gid=0` so container UID/GID 0 maps to
+the invoking host user. Files created in `/workspace` are therefore owned by
+the host user, not host root. Podman does not fix ownership automatically for
+arbitrary `--userns` settings; this option is required for this image.
 
 ```bash
-docker build \
-  --build-arg USER_UID="$(id -u)" \
-  --build-arg USER_GID="$(id -g)" \
-  -t custom-dev-container .
+podman pull ghcr.io/radiorambo/custom-dev-container:latest
 ```
 
-Avoid overriding the container user with `--user`; it does not create a
-matching passwd entry or adjust `/home/user` ownership, which can make tools
-such as OpenCode unable to create their config/cache files.
+Verify the mapping:
+
+```bash
+podman run --rm \
+  --userns=keep-id:uid=0,gid=0 \
+  -v "$PWD:/workspace" \
+  --workdir /workspace \
+  ghcr.io/radiorambo/custom-dev-container:latest \
+  sh -c 'touch .permission-check-container'
+stat -c '%U:%G %a %n' .permission-check-container
+rm .permission-check-container
+```
+
+Do not add `:U` to the bind mount: it recursively changes ownership on the
+host and is unnecessary with `keep-id`.
+
+### Why Podman
+
+This container is a temporary development environment that needs unrestricted
+root access for its tools. Rootful Docker would give container root more direct
+host impact if the container or a mounted service were compromised. Rootless
+Podman places the container in a user namespace: `root` is privileged inside
+the container but not privileged on the host. Do not use `--privileged`, mount
+the host Docker/Podman socket, or run Podman itself as root.
+
+The GitHub workflow still uses Docker Buildx for portable registry publishing;
+Podman is the local runtime.
 
 Inside the container:
 

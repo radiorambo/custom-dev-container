@@ -1,12 +1,12 @@
 FROM archlinux:latest
 
-ARG USER_UID=1000
-ARG USER_GID=1000
+ARG BUILDER_UID=1000
+ARG BUILDER_GID=1000
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    HOME=/home/user \
-    PATH=/home/user/.local/share/vite-plus/bin:${PATH}
+    HOME=/root \
+    PATH=/root/.local/share/vite-plus/bin:${PATH}
 
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm --needed \
@@ -38,22 +38,22 @@ RUN pacman-key --init && \
     pacman -Syu fresh-editor paru --noconfirm && \
     pacman -Scc --noconfirm
 
-RUN groupadd --gid "${USER_GID}" user && \
-    useradd --create-home --uid "${USER_UID}" --gid "${USER_GID}" --shell /bin/bash user && \
-    printf 'user ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/user && \
-    chmod 0440 /etc/sudoers.d/user
+RUN groupadd --gid "${BUILDER_GID}" builder && \
+    useradd --create-home --uid "${BUILDER_UID}" --gid "${BUILDER_GID}" --shell /bin/bash builder && \
+    printf 'builder ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/builder && \
+    chmod 0440 /etc/sudoers.d/builder
 
-USER user
+USER builder
 
-RUN paru -S --noconfirm --needed obscura-browser-bin && \
-    curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash && \
-    printf "alias oc='opencode'\n" >> /home/user/.bashrc
+RUN HOME=/home/builder paru -S --noconfirm --needed obscura-browser-bin
 
 USER root
 
-RUN rm -rf /home/user/.cache/paru /etc/sudoers.d/user
+RUN rm -rf /home/builder/.cache/paru /etc/sudoers.d/builder && \
+    curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash && \
+    printf "alias oc='opencode'\n" >> /root/.bashrc
 
-USER user
+USER root
 
 RUN bun --version && \
     bunx --version && \
@@ -63,9 +63,9 @@ RUN bun --version && \
     vp --version && \
     obscura --version
 
-COPY --chown=user:user config/opencode.json /home/user/.config/opencode/opencode.json
-COPY --chown=user:user config/cli.json /home/user/.config/opencode/cli.json
-COPY --chown=user:user config/AGENTS.md /home/user/.config/opencode/AGENTS.md
+COPY config/opencode.json /root/.config/opencode/opencode.json
+COPY config/cli.json /root/.config/opencode/cli.json
+COPY config/AGENTS.md /root/.config/opencode/AGENTS.md
 
 EXPOSE 10100-10110
 

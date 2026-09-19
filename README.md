@@ -18,6 +18,7 @@ ghcr.io/radiorambo/custom-dev-container:latest
 
 - Arch Linux (rolling)
 - Bun (latest, official release tarball)
+- `npm` and `npx` aliases mapped to `bun` and `bunx`
 - Python + pip (from `pacman`)
 - OpenCode CLI (from `[extra]`)
 - Vite+ CLI (`vp`, from `https://vite.plus`)
@@ -28,8 +29,9 @@ ghcr.io/radiorambo/custom-dev-container:latest
 
 ## OpenCode MCP
 
-Obscura is installed from AUR as `obscura-browser-bin` and configured as the
-OpenCode MCP server with `obscura mcp`. It is enabled automatically in OpenCode.
+Obscura is installed from its prebuilt GitHub release archive and configured as
+the OpenCode MCP server with `obscura mcp`. It is enabled automatically in
+OpenCode.
 
 ## Schedule
 
@@ -96,6 +98,19 @@ fresh --version
 opencode --version
 fresh
 opencode
+```
+
+### JavaScript runtime decision
+
+The image intentionally does not include Node.js, npm, or pnpm to reduce its
+size. In interactive Bash sessions, `npm` is aliased to `bun` and `npx` to
+`bunx`.
+
+If a project specifically requires Node.js or pnpm, install the needed tool
+for that session rather than adding it to the base image:
+
+```bash
+pacman -Syu --noconfirm nodejs-lts pnpm
 ```
 
 ## Versioning

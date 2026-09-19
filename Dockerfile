@@ -1,8 +1,5 @@
 FROM archlinux:latest
 
-ARG BUILDER_UID=1000
-ARG BUILDER_GID=1000
-
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     HOME=/root \
@@ -11,15 +8,11 @@ ENV LANG=C.UTF-8 \
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm --needed \
         base \
-        base-devel \
         curl \
         git \
         ca-certificates \
         python \
         python-pip \
-        nodejs-lts \
-        pnpm \
-        npm \
         bun \
         opencode \
         unzip \
@@ -35,23 +28,17 @@ RUN pacman-key --init && \
     pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' && \
     pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \
     printf '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist\n' >> /etc/pacman.conf && \
-    pacman -Syu fresh-editor paru --noconfirm && \
+    pacman -Syu fresh-editor --noconfirm && \
     pacman -Scc --noconfirm
 
-RUN groupadd --gid "${BUILDER_GID}" builder && \
-    useradd --create-home --uid "${BUILDER_UID}" --gid "${BUILDER_GID}" --shell /bin/bash builder && \
-    printf 'builder ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/builder && \
-    chmod 0440 /etc/sudoers.d/builder
-
-USER builder
-
-RUN HOME=/home/builder paru -S --noconfirm --needed obscura-browser-bin
-
-USER root
-
-RUN rm -rf /home/builder/.cache/paru /etc/sudoers.d/builder && \
+RUN curl -fsSL https://github.com/h4ckf0r0day/obscura/releases/latest/download/obscura-x86_64-linux.tar.gz \
+        -o /tmp/obscura.tar.gz && \
+    tar -xzf /tmp/obscura.tar.gz -C /tmp && \
+    install -m 0755 /tmp/obscura /usr/local/bin/obscura && \
+    install -m 0755 /tmp/obscura-worker /usr/local/bin/obscura-worker && \
+    rm -rf /tmp/obscura.tar.gz /tmp/obscura /tmp/obscura-worker && \
     curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash && \
-    printf "alias oc='opencode'\n" >> /root/.bashrc
+    printf "alias oc='opencode'\nalias npm='bun'\nalias npx='bunx'\n" >> /root/.bashrc
 
 USER root
 
@@ -61,13 +48,11 @@ RUN bun --version && \
     fresh --version && \
     opencode --version && \
     vp --version && \
-    obscura --version
+    obscura --version && \
 
 COPY config/opencode.json /root/.config/opencode/opencode.json
 COPY config/cli.json /root/.config/opencode/cli.json
 COPY config/AGENTS.md /root/.config/opencode/AGENTS.md
-
-EXPOSE 10100-10110
 
 EXPOSE 10100-10110
 

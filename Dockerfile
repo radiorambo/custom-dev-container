@@ -50,7 +50,7 @@ RUN bun --version && \
     fresh --version && \
     opencode --version && \
     vp --version && \
-    obscura --version && \
+    obscura --version
 
 COPY config/opencode.json /root/.config/opencode/opencode.json
 COPY config/cli.json /root/.config/opencode/cli.json

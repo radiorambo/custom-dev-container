@@ -47,8 +47,26 @@ Note: GitHub's cron syntax has no biweekly primitive, so `1,15` is the standard 
 ## Usage
 
 ```bash
-docker run -it --rm ghcr.io/radiorambo/custom-dev-container:latest
+docker run -it --rm \
+  -v "$PWD:/workspace" \
+  --workdir /workspace \
+  ghcr.io/radiorambo/custom-dev-container:latest
 ```
+
+The image runs as the non-root `user` account (UID/GID 1000), so files created
+in a bind-mounted workspace are owned by the usual first host user. For a host
+with a different UID/GID, build with matching values:
+
+```bash
+docker build \
+  --build-arg USER_UID="$(id -u)" \
+  --build-arg USER_GID="$(id -g)" \
+  -t custom-dev-container .
+```
+
+Avoid overriding the container user with `--user`; it does not create a
+matching passwd entry or adjust `/home/user` ownership, which can make tools
+such as OpenCode unable to create their config/cache files.
 
 Inside the container:
 

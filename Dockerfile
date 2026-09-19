@@ -1,7 +1,12 @@
 FROM archlinux:latest
 
+ARG USER_UID=1000
+ARG USER_GID=1000
+
 ENV LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
+    LC_ALL=C.UTF-8 \
+    HOME=/home/user \
+    PATH=/home/user/.local/share/vite-plus/bin:${PATH}
 
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm --needed \
@@ -33,14 +38,15 @@ RUN pacman-key --init && \
     pacman -Syu fresh-editor --noconfirm && \
     pacman -Scc --noconfirm
 
-RUN npm install -g chrome-devtools-mcp
+RUN HOME=/root npm install -g chrome-devtools-mcp
 
-RUN curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash
+RUN groupadd --gid "${USER_GID}" user && \
+    useradd --create-home --uid "${USER_UID}" --gid "${USER_GID}" --shell /bin/bash user
 
-# ponytail: split layout reports bin at ~/.local/share/vite-plus/bin
-ENV PATH="/root/.local/share/vite-plus/bin:${PATH}"
+USER user
 
-RUN printf "alias oc='opencode'\n" >> /root/.bashrc
+RUN curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash && \
+    printf "alias oc='opencode'\n" >> /home/user/.bashrc
 
 RUN bun --version && \
     bunx --version && \
@@ -50,8 +56,8 @@ RUN bun --version && \
     vp --version && \
     chrome-devtools-mcp --version
 
-COPY config/opencode.json /root/.config/opencode/opencode.json
-COPY config/AGENTS.md /root/.config/opencode/AGENTS.md
+COPY --chown=user:user config/opencode.json /home/user/.config/opencode/opencode.json
+COPY --chown=user:user config/AGENTS.md /home/user/.config/opencode/AGENTS.md
 
 EXPOSE 10100-10110
 

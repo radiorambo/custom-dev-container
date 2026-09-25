@@ -5,6 +5,9 @@ ENV LANG=C.UTF-8 \
     HOME=/root \
     PUID=0 \
     PGID=0 \
+    CUSTOM_PORT=10100 \
+    CUSTOM_HTTPS_PORT=10101 \
+    CUSTOM_WS_PORT=10102 \
     PATH=/root/.local/share/vite-plus/bin:${PATH}
 
 RUN pacman -Syu --noconfirm && \

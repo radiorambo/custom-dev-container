@@ -45,10 +45,17 @@ Note: GitHub's cron syntax has no biweekly primitive, so `1,15` is the standard 
 podman run -it --rm \
   --userns=keep-id:uid=0,gid=0 \
   -e PUID=0 -e PGID=0 \
+  -p 127.0.0.1:10100-10110:10100-10110 \
   -v "$PWD:/workspace" \
   --workdir /workspace \
   ghcr.io/radiorambo/custom-dev-container:latest
 ```
+
+Open the desktop at **https://localhost:10101** and accept the local
+self-signed certificate. HTTP uses 10100, HTTPS 10101, and WebSocket 10102;
+the remaining ports in 10100–10110 are available for development services.
+For a background container, replace `-it` with `-d` and open a shell with
+`podman exec -it <container-name> bash`.
 
 The image intentionally runs all applications as `root` inside the container.
 Use rootless Podman with `keep-id:uid=0,gid=0` so container UID/GID 0 maps to
@@ -69,6 +76,7 @@ Verify the mapping:
 podman run --rm \
   --userns=keep-id:uid=0,gid=0 \
   -e PUID=0 -e PGID=0 \
+  -p 127.0.0.1:10100-10110:10100-10110 \
   -v "$PWD:/workspace" \
   --workdir /workspace \
   ghcr.io/radiorambo/custom-dev-container:latest \

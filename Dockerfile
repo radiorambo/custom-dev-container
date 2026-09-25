@@ -3,6 +3,8 @@ FROM lscr.io/linuxserver/webtop:arch-xfce
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     HOME=/root \
+    PUID=0 \
+    PGID=0 \
     PATH=/root/.local/share/vite-plus/bin:${PATH}
 
 RUN pacman -Syu --noconfirm && \

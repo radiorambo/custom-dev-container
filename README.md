@@ -44,6 +44,7 @@ Note: GitHub's cron syntax has no biweekly primitive, so `1,15` is the standard 
 ```bash
 podman run -it --rm \
   --userns=keep-id:uid=0,gid=0 \
+  -e PUID=0 -e PGID=0 \
   -v "$PWD:/workspace" \
   --workdir /workspace \
   ghcr.io/radiorambo/custom-dev-container:latest
@@ -52,8 +53,11 @@ podman run -it --rm \
 The image intentionally runs all applications as `root` inside the container.
 Use rootless Podman with `keep-id:uid=0,gid=0` so container UID/GID 0 maps to
 the invoking host user. Files created in `/workspace` are therefore owned by
-the host user, not host root. Podman does not fix ownership automatically for
-arbitrary `--userns` settings; this option is required for this image.
+the host user, not host root. Set `PUID=0` and `PGID=0` so LinuxServer runs the
+desktop as root inside this user namespace; without them it runs as UID 911,
+which cannot access this image's `/root`-based tool configuration. Podman does
+not fix ownership automatically for arbitrary `--userns` settings; this mapping
+is required for this image.
 
 ```bash
 podman pull ghcr.io/radiorambo/custom-dev-container:latest
@@ -64,6 +68,7 @@ Verify the mapping:
 ```bash
 podman run --rm \
   --userns=keep-id:uid=0,gid=0 \
+  -e PUID=0 -e PGID=0 \
   -v "$PWD:/workspace" \
   --workdir /workspace \
   ghcr.io/radiorambo/custom-dev-container:latest \

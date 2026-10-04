@@ -18,25 +18,14 @@ ghcr.io/radiorambo/custom-dev-container:latest
 
 Base is `lscr.io/linuxserver/webtop:arch-xfce`, plus this repo's layers:
 
-- Arch Linux (rolling) + XFCE desktop (Thunar, mousepad) via Selkies/noVNC web UI (HTTPS 10101, HTTP 10100, WebSocket 10102)
-- Docker-in-Docker: `docker` + `dockerd` 29.8.1, `docker compose` 5.5.1, `containerd` 2.4.0 (from the WebTop base; `svc-docker`, `START_DOCKER=true` by default)
-- Bun 1.4.2 (latest release tarball at build time)
-- `npm` and `npx` aliases mapped to `bun` and `bunx`
-- Node.js (system, from `pacman`) + Python 3.14 + pip (from `pacman`)
-- OpenCode CLI (from `[extra]`)
-- Vite+ CLI (`vp`, from `https://vite.plus`)
-- Fresh editor (latest, from chaotic-aur)
+- Arch Linux + XFCE desktop
+- Docker-in-Docker: `docker` + `dockerd`, `docker compose`, `containerd` 
+- Bun, Node.js
+- Python + pip 
+- OpenCode, Vite+, Fresh editor
 - Common CLI tools: `git`, `curl`, `sudo`, `jq`, `unzip`, `xz`, `which`, `ca-certificates`
-- Chromium via in-place `--no-sandbox` wrapper (`/usr/bin/chromium` → real binary at `chromium.real`; menu uses absolute path, so shadowing `PATH` was not enough)
-- Obscura headless browser (for browser automation via MCP)
-- OpenCode MCP server: Obscura (`obscura mcp`)
-- CLI-first shell (append `bash` to `run`, GUI stays backgrounded) + `gui` helper (prints desktop URLs, curl-checks `https://localhost:10101`)
+- Chromium, Obscura headless browser 
 
-## OpenCode MCP
-
-Obscura is installed from its prebuilt GitHub release archive and configured as
-the OpenCode MCP server with `obscura mcp`. It is enabled automatically in
-OpenCode.
 
 ## Schedule
 
@@ -44,42 +33,7 @@ The workflow runs on a twice-monthly cron (`0 3 1,15 * *`) — 03:00 UTC on the 
 
 Note: GitHub's cron syntax has no biweekly primitive, so `1,15` is the standard approximation.
 
-## Usage (CLI-first, GUI in background)
-
-`ENTRYPOINT` is LinuxServer `/init` (s6 + Selkies). A bare
-`docker run -it ... image` attaches to init logs, not a usable shell.
-Append `bash` for a foreground shell — the GUI keeps running behind it.
-
-Foreground shell (where most work happens):
-
-```bash
-docker run -it --rm \
-  --privileged \
-  -e PUID=0 -e PGID=0 \
-  --shm-size=1gb \
-  -p 127.0.0.1:10100-10110:10100-10110 \
-  -v docker-lib:/var/lib/docker \
-  -v "$PWD:/workspace" \
-  --workdir /workspace \
-  ghcr.io/radiorambo/custom-dev-container:latest bash
-```
-
-Detached server + exec (long-lived container):
-
-```bash
-docker run -d --name dev \
-  --privileged \
-  -e PUID=0 -e PGID=0 \
-  --shm-size=1gb \
-  -p 127.0.0.1:10100-10110:10100-10110 \
-  -v docker-lib:/var/lib/docker \
-  -v "$PWD:/workspace" \
-  --workdir /workspace \
-  ghcr.io/radiorambo/custom-dev-container:latest
-docker exec -it dev bash
-docker logs -f dev
-```
-
+# Others
 Do not run detached as `run -d ... image bash` without `-t` — bash exits
 immediately and the container stops. For detached mode pass no command
 and use `exec` above.

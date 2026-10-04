@@ -46,13 +46,43 @@ RUN curl -fsSL https://github.com/h4ckf0r0day/obscura/releases/latest/download/o
     curl -fsSL https://vite.plus | \
     VP_NODE_MANAGER=no VP_PM_MANAGER=no bash && \
     vp env off && \
-    printf "alias oc='opencode'\nalias npm='bun'\nalias npx='bunx'\n" >> /root/.bashrc
+    printf '%s\n' \
+      "alias oc='opencode'" \
+      "alias npm='bun'" \
+      "alias npx='bunx'" \
+      "# CLI-first helper: GUI runs backgrounded under s6 /init." \
+      "# Prints URLs + health-checks Selkies HTTPS from inside the container." \
+      "gui() {" \
+      "  echo 'Desktop HTTPS: https://localhost:10101 (accept self-signed)'" \
+      "  echo 'HTTP: http://localhost:10100 | WebSocket: 10102'" \
+      "  if _out=\$(curl -ks -m 5 -o /dev/null -w 'GUI status %{http_code} (%{time_total}s)' https://localhost:10101 2>/dev/null); then echo \"\$_out\"; else echo 'GUI not responding yet - retry in a few seconds'; fi; unset _out" \
+      "}" \
+      >> /root/.bashrc
+
+# Chromium's sandbox refuses root and this image is root-only by design
+# (previously the desktop ran as non-root `abc`, so menu clicks worked).
+# Replace /usr/bin/chromium in place: the XFCE menu launches it by absolute
+# path (Exec=/usr/bin/chromium), so a /usr/local/bin shadow would only fix
+# the terminal. Manual `pacman -Syu chromium` inside a live container
+# restores the stock binary; rebuild re-applies this.
+RUN mv /usr/bin/chromium /usr/bin/chromium.real && \
+    printf '%s\n' \
+      '#!/bin/sh' \
+      '# See NOTE above: root + Chromium sandbox are incompatible.' \
+      'for b in /usr/bin/chromium.real /usr/bin/chromium-browser /opt/chromium/chromium; do' \
+      '    [ -x "$b" ] && exec "$b" --no-sandbox "$@"' \
+      'done' \
+      'echo "chromium: real binary not found" >&2' \
+      'exit 127' \
+      > /usr/bin/chromium && \
+    chmod 0755 /usr/bin/chromium
 
 # USER root
 
 RUN bun --version && \
     bunx --version && \
     python --version && \
+    chromium --version && \
     fresh --version && \
     opencode --version && \
     vp --version && \
@@ -66,4 +96,12 @@ EXPOSE 10100-10110
 
 WORKDIR /workspace
 
-# CMD ["/bin/bash"]
+# NOTE: CMD intentionally left unset. ENTRYPOINT is LinuxServer /init (s6).
+# Pass `bash` at `run` time for a foreground shell (GUI stays backgrounded):
+#   docker run -it --rm ... image bash
+# Setting a default `CMD ["bash"]` would make bare `run -d ... image`
+# (no tty) exit immediately, breaking detached GUI/background use.
+# NOTE: inner Docker (DinD) is preinstalled via the WebTop base
+# (dockerd + svc-docker, START_DOCKER=true by default). It starts only
+# with --privileged (s6 gate: /dev/cpu_dma_latency) plus a named volume
+# at /var/lib/docker (overlay-on-overlay fails without it).

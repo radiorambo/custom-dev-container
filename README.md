@@ -103,29 +103,10 @@ this is a local, temporary dev environment, not shared infrastructure.
 
 `~/.config/just/container/temp.just` wraps the detached pattern: `just
 container start` creates the `temp-docker-lib` volume and `temp` container if
-needed, prints the GUI endpoints, and `exec`s into `bash`. The container is
-`--rm`, so `docker stop temp` after exiting the shell removes it.
-`just container shell` attaches to the running `temp` container.
-
-Previously the helper also trapped `HUP`/`TERM` to guarantee cleanup when the
-terminal died:
-
-```bash
-cleanup() {
-    docker stop --time 0 temp >/dev/null 2>&1 || true
-}
-trap cleanup HUP TERM
-rc=0
-docker exec -it temp bash || rc=$?
-cleanup
-trap - HUP TERM
-exit "$rc"
-```
-
-That was removed to keep `start` minimal — with `--rm`, an exited shell plus
-a manual `docker stop temp` covers the normal cases. Re-add the snippet above
-in place of the bare `docker exec -it temp bash` if orphaned `temp`
-containers start appearing after killed terminals.
+needed, prints the GUI endpoints, `exec`s into `bash`, and stops the
+container on shell exit / `HUP` / `TERM` via a `trap` on `cleanup`
+(`docker stop --time 0 temp`). The container is `--rm`, so stopping it also
+removes it. `just container shell` attaches to the running `temp` container.
 
 ## Appendix: previous Podman setup (kept for switch-back reference)
 
